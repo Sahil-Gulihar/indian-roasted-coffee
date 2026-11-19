@@ -25,7 +25,7 @@ export async function GET() {
         shortName: entry.data.shortTitle ?? entry.data.title,
         description: entry.data.description,
         summary: entry.data.summary,
-        url: `${BASE_URL}/products/${slug}`,
+        url: `${BASE_URL}/products/${slug}/`,
         image: entry.data.image ? resolveUrl(entry.data.image) : null,
         imageAlt: entry.data.imageAlt ?? entry.data.title,
         currency: 'INR',

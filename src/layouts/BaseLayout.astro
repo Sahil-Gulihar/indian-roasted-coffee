@@ -4,6 +4,7 @@ import Footer from '../components/uswds/Footer.astro';
 import type { Locale } from '../i18n/utils';
 import { useTranslations } from '../i18n/utils';
 import { siteConfig } from '../config/site';
+import { absUrl, clip, DEFAULT_OG_IMAGE } from '../utils/seo';
 
 // Self-hosted fonts (CSP allows font-src 'self' only)
 import '@fontsource/poppins/300.css';
@@ -21,8 +22,11 @@ interface Props {
   locale?: Locale;
   /** Canonical URL for this page */
   canonicalUrl?: string;
-  /** Open Graph image */
+  /** Open Graph image (site path or absolute URL) */
   ogImage?: string;
+  ogType?: 'website' | 'product';
+  /** schema.org JSON-LD for this page */
+  jsonLd?: object;
   /** Set true on dev-only pages to block search engine indexing */
   noindex?: boolean;
 }
@@ -32,7 +36,9 @@ const {
   description = siteConfig.description,
   locale = 'en',
   canonicalUrl,
-  ogImage,
+  ogImage = DEFAULT_OG_IMAGE,
+  ogType = 'website',
+  jsonLd,
   noindex = false,
 } = Astro.props;
 
@@ -40,9 +46,10 @@ const base = import.meta.env.BASE_URL;
 
 const t = useTranslations(locale);
 const lang = locale;
-const pageTitle = title === siteConfig.name
+const pageTitle = title === siteConfig.name || `${title} | ${siteConfig.name}`.length > 60
   ? title
   : `${title} | ${siteConfig.name}`;
+const metaDescription = clip(description, 160);
 // Strip the base prefix so Header nav/toggle logic works on base-relative paths
 const basePath = base.slice(0, -1); // '/astro-gov-starter/' -> '/astro-gov-starter'
 const rawPath = Astro.url.pathname;
@@ -57,8 +64,12 @@ const enPath = currentPath.replace(/^\/es/, '') || '/';
 const esPath = `/es${currentPath.startsWith('/es') ? currentPath.replace(/^\/es/, '') : currentPath}`;
 const pageUrl = `${siteOrigin}${basePath}${currentPath}`;
 const resolvedCanonical = canonicalUrl ?? pageUrl;
-const ogLocale = locale === 'es' ? 'es_US' : 'en_US';
-const ogLocaleAlternate = locale === 'es' ? 'en_US' : 'es_US';
+const ogLocale = locale === 'es' ? 'es_US' : 'en_IN';
+const ogLocaleAlternate = locale === 'es' ? 'en_IN' : 'es_US';
+const ogImageUrl = absUrl(ogImage);
+// Only routes under src/pages/[...lang]/ have a Spanish version.
+const hasEsVersion = /^\/(es\/)?((about|accessibility|contact|glossary|privacy|returns|search|terms|wholesale)\/|products\/([^/]+\/)?)?$/.test(currentPath);
+
 ---
 
 <!doctype html>
@@ -68,23 +79,27 @@ const ogLocaleAlternate = locale === 'es' ? 'en_US' : 'es_US';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>{pageTitle}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={metaDescription} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     {!noindex && <link rel="canonical" href={resolvedCanonical} />}
 
     <!-- Open Graph -->
+    <meta property="og:site_name" content={siteConfig.name} />
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={pageUrl} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={resolvedCanonical} />
     <meta property="og:locale" content={ogLocale} />
-    <meta property="og:locale:alternate" content={ogLocaleAlternate} />
-    {ogImage && <meta property="og:image" content={ogImage} />}
+    {hasEsVersion && <meta property="og:locale:alternate" content={ogLocaleAlternate} />}
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <!-- Alternate languages -->
-    <link rel="alternate" hreflang="en" href={`${siteOrigin}${basePath}${enPath}`} />
-    <link rel="alternate" hreflang="es" href={`${siteOrigin}${basePath}${esPath}`} />
+    {hasEsVersion && <link rel="alternate" hreflang="en" href={`${siteOrigin}${basePath}${enPath}`} />}
+    {hasEsVersion && <link rel="alternate" hreflang="es" href={`${siteOrigin}${basePath}${esPath}`} />}
+
+    {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}
 
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
