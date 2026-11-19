@@ -28,9 +28,7 @@ const copy = {
     heroLabel: 'Products',
     showing: (n: number) => `Showing ${n} products`,
     notFoundLead: "Don't see what you need?",
-    notFoundHelp: 'help center',
-    notFoundOr: 'or',
-    notFoundContact: 'contact us',
+    notFoundContact: 'Contact us',
     benefitsBefore: 'You can also visit the',
     benefitsAfter: 'to learn about Indian coffee growing regions.',
     benefitsUrl: 'https://coffeeboard.gov.in/',
@@ -44,9 +42,7 @@ const copy = {
     heroLabel: 'Productos',
     showing: (n: number) => `Mostrando ${n} productos`,
     notFoundLead: '¿No encuentras lo que necesitas?',
-    notFoundHelp: 'centro de ayuda',
-    notFoundOr: 'o',
-    notFoundContact: 'contáctenos',
+    notFoundContact: 'Contáctenos',
     benefitsBefore: 'También puedes visitar el',
     benefitsAfter: 'para conocer las regiones cafeteras de India.',
     benefitsUrl: 'https://coffeeboard.gov.in/',
@@ -89,8 +85,7 @@ const services = (await getCollection('services', ({ data }) => !data.draft))
 
     <div class="shop-foot">
       <p>
-        {copy.notFoundLead} {locale === 'es' ? 'Visita nuestro' : 'Visit our'}{' '}
-        <a href={withBase(`${prefix}/help/`)}>{copy.notFoundHelp}</a> {copy.notFoundOr}{' '}
+        {copy.notFoundLead}{' '}
         <a href={withBase(`${prefix}/contact/`)}>{copy.notFoundContact}</a>.
       </p>
       <p>

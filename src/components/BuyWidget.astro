@@ -69,7 +69,7 @@ const hasGreenOption = packPricing?.some((p) => p.greenInr != null) ?? false;
         ))}
     </select>
     {hasGreenOption && (
-      <p class="buy-panel__price-note" style="margin:0.5rem 0 0">Green (unroasted) beans are priced lower — selected via Grind.</p>
+      <p class="buy-panel__price-note buy-panel__green-note">Green (unroasted) beans are priced lower — selected via Grind.</p>
     )}
   </div>
 
@@ -116,6 +116,7 @@ const hasGreenOption = packPricing?.some((p) => p.greenInr != null) ?? false;
   }
 
   .buy-panel__price-note { font-size: 0.8rem; color: var(--c-muted); }
+  .buy-panel__green-note { display: block; margin: 0.5rem 0 0; }
 
   .buy-panel__section { margin-bottom: 1.5rem; }
 

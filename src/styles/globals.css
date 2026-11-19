@@ -17,7 +17,7 @@
 
   --c-ink: #1a1a1a;
   --c-text: #555;
-  --c-muted: #8a8a8a;
+  --c-muted: #6b6b6b;
   --c-line: #e8e8e8;
   --c-tile: #f4f4f4;
   --c-bg: #fff;
@@ -285,3 +285,24 @@ textarea:not([disabled]):focus-visible { outline: var(--focus-outline); outline-
 }
 .usa-card__img, .usa-card__media img { border-radius: 0; }
 .usa-card__heading { font-size: 1.05rem; }
+
+/* ─── State / city landing pages sidebar ───────────────────────────────── */
+
+.geo-aside { position: sticky; top: 5.5rem; }
+.geo-box { border: 1px solid var(--c-line); padding: 1.5rem; margin-bottom: 1rem; }
+.geo-box--tile { background: var(--c-tile); border-color: var(--c-tile); }
+.geo-box__label {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  margin: 0 0 0.75rem;
+}
+.geo-box__title { font-family: var(--f-head); color: var(--c-ink); font-size: 1rem; margin: 0 0 1rem; }
+.geo-list { list-style: none; margin: 0; padding: 0; font-size: 0.875rem; }
+.geo-list li { padding: 0.45rem 0; border-bottom: 1px solid var(--c-line); }
+.geo-box--tile .geo-list li { border-bottom-color: #e2e2e2; }
+.geo-list a { text-decoration: none; }
+.geo-list a:hover { text-decoration: underline; }
+.geo-box__btn { width: 100%; }
+.geo-box__note { font-size: 0.75rem; color: var(--c-muted); margin: 0.75rem 0 0; text-align: center; }

@@ -98,10 +98,10 @@ const ogLocaleAlternate = locale === 'es' ? 'en_US' : 'es_US';
 
     <main id="main-content" tabindex="-1">
       <slot />
+      <WhatsappWidget />
     </main>
 
     <Footer locale={locale} />
-    <WhatsappWidget />
 
     <!-- USWDS JavaScript for accordion, banner, and nav behaviors.
          Served from public/uswds/js/ — copied by scripts/setup-uswds.mjs. -->
