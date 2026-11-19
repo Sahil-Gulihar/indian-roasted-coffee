@@ -4,7 +4,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Hero from '../../../components/uswds/Hero.astro';
 import ServiceCard from '../../../components/uswds/ServiceCard.astro';
 import { idToSlug } from '../../../utils/content';
-import { absUrl, graph } from '../../../utils/seo';
+import { graph, itemListSchema } from '../../../utils/seo';
 import type { Locale } from '../../../i18n/utils';
 import { localeStaticPaths, useTranslations, withBase } from '../../../i18n/utils';
 
@@ -54,15 +54,9 @@ const copy = {
 const services = (await getCollection('services', ({ data }) => !data.draft))
   .sort((a, b) => a.data.order - b.data.order);
 
-const jsonLd = graph({
-  '@type': 'ItemList',
-  itemListElement: services.map((service, i) => ({
-    '@type': 'ListItem',
-    position: i + 1,
-    name: service.data.title,
-    url: absUrl(`${prefix}/products/${idToSlug(service.id)}/`),
-  })),
-});
+const jsonLd = graph(itemListSchema(
+  services.map((s) => ({ name: s.data.title, path: `${prefix}/products/${idToSlug(s.id)}/` })),
+));
 ---
 
 <BaseLayout title={copy.title} description={copy.description} locale={locale} jsonLd={jsonLd}>

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { STATES_CITIES, toSlug } from '../../../utils/geo';
-import { siteConfig } from '../../../config/site';
 import { breadcrumbSchema, graph } from '../../../utils/seo';
 
 export function getStaticPaths() {
@@ -20,7 +19,6 @@ const otherCities = top_cities.filter(c => c !== cityName);
 
 const title = `Roasted Indian Coffee in ${cityName}, ${state}`;
 const description = `Order fresh roasted Indian coffee beans delivered to ${cityName}, ${state}. Single-origin beans from Coorg, Chikmagalur, Wayanad, and Northeast India — roasted fresh to order and shipped within 3–5 days.`;
-const canonicalUrl = `https://${siteConfig.domain}/${toSlug(state)}/${toSlug(cityName)}/roasted-indian-coffee/`;
 const jsonLd = graph(breadcrumbSchema([
   { name: 'Home', path: '/' },
   { name: state, path: `/${toSlug(state)}/roasted-indian-coffee/` },
@@ -28,7 +26,7 @@ const jsonLd = graph(breadcrumbSchema([
 ]));
 ---
 
-<BaseLayout {title} {description} {canonicalUrl} {jsonLd}>
+<BaseLayout {title} {description} {jsonLd}>
   <section class="grid-container usa-section">
     <div class="grid-row grid-gap">
       <div class="grid-col-12 tablet:grid-col-8">

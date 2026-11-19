@@ -5,6 +5,7 @@ import type { Locale } from '../i18n/utils';
 import { useTranslations } from '../i18n/utils';
 import { siteConfig } from '../config/site';
 import { absUrl, clip, DEFAULT_OG_IMAGE } from '../utils/seo';
+import { LOCALE_TAGS } from '../i18n/locales';
 
 // Self-hosted fonts (CSP allows font-src 'self' only)
 import '@fontsource/poppins/300.css';
@@ -57,18 +58,13 @@ const currentPath = basePath && rawPath.startsWith(basePath)
   ? rawPath.slice(basePath.length) || '/'
   : rawPath;
 
-// Absolute URLs for canonical/hreflang/og — include the base path so
-// subpath deployments (e.g. GitHub Pages project sites) emit correct URLs
-const siteOrigin = `https://${siteConfig.domain}`;
 const enPath = currentPath.replace(/^\/es/, '') || '/';
-const esPath = `/es${currentPath.startsWith('/es') ? currentPath.replace(/^\/es/, '') : currentPath}`;
-const pageUrl = `${siteOrigin}${basePath}${currentPath}`;
-const resolvedCanonical = canonicalUrl ?? pageUrl;
-const ogLocale = locale === 'es' ? 'es_US' : 'en_IN';
-const ogLocaleAlternate = locale === 'es' ? 'en_IN' : 'es_US';
+const esPath = `/es${enPath}`;
+const resolvedCanonical = canonicalUrl ?? absUrl(currentPath);
 const ogImageUrl = absUrl(ogImage);
-// Only routes under src/pages/[...lang]/ have a Spanish version.
-const hasEsVersion = /^\/(es\/)?((about|accessibility|contact|glossary|privacy|returns|search|terms|wholesale)\/|products\/([^/]+\/)?)?$/.test(currentPath);
+const ogTag = (l: Locale) => LOCALE_TAGS[l].replace('-', '_');
+// Every route under src/pages/[...lang]/ is built in both languages.
+const hasEsVersion = !noindex && Astro.routePattern.startsWith('/[...lang]');
 
 ---
 
@@ -90,14 +86,15 @@ const hasEsVersion = /^\/(es\/)?((about|accessibility|contact|glossary|privacy|r
     <meta property="og:description" content={metaDescription} />
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={resolvedCanonical} />
-    <meta property="og:locale" content={ogLocale} />
-    {hasEsVersion && <meta property="og:locale:alternate" content={ogLocaleAlternate} />}
+    <meta property="og:locale" content={ogTag(locale)} />
+    {hasEsVersion && <meta property="og:locale:alternate" content={ogTag(locale === 'es' ? 'en' : 'es')} />}
     <meta property="og:image" content={ogImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
 
     <!-- Alternate languages -->
-    {hasEsVersion && <link rel="alternate" hreflang="en" href={`${siteOrigin}${basePath}${enPath}`} />}
-    {hasEsVersion && <link rel="alternate" hreflang="es" href={`${siteOrigin}${basePath}${esPath}`} />}
+    {hasEsVersion && <link rel="alternate" hreflang={LOCALE_TAGS.en} href={absUrl(enPath)} />}
+    {hasEsVersion && <link rel="alternate" hreflang={LOCALE_TAGS.es} href={absUrl(esPath)} />}
+    {hasEsVersion && <link rel="alternate" hreflang="x-default" href={absUrl(enPath)} />}
 
     {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}
 
